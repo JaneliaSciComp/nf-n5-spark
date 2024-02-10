@@ -20,4 +20,4 @@ To [install Singularity](https://sylabs.io/guides/3.7/admin-guide/installation.h
 
 Now you can run the pipeline and it will download everything else it needs:
 
-    nextflow run JaneliaSciComp/nf-n5-spark --indir ~/dev/n5-tools-dask/output_tiffs --outdir ./output -profile singularity
+    nextflow run JaneliaSciComp/nf-n5-spark --indir /path/to/tiffs --outdir ./output -profile singularity
