@@ -1,6 +1,6 @@
 # nf-n5-spark
 
-Nextflow pipeline wrapper for [saalfeldlab/n5-spark](https://github.com/saalfeldlab/n5-spark/).
+Nextflow pipeline wrapper for [saalfeldlab/n5-spark](https://github.com/saalfeldlab/n5-spark/). Currently it only support converting a TIFF series into an N5.
 
 ## Quick Start
 
