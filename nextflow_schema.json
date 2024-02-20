@@ -35,6 +35,11 @@
             "description": "",
             "default": "",
             "properties": {
+                "input_dataset": {
+                    "type": "string",
+                    "description": "Name for the dataset inside the N5 input folder. Default: /s0",
+                    "fa_icon": "fas fa-database"
+                },
                 "output_name": {
                     "type": "string",
                     "description": "Name for the output N5 folder to be created. Default: output.n5",

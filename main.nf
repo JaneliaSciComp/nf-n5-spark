@@ -51,6 +51,7 @@ log.info logo + paramsSummaryLog(workflow) + citation
 include { SPARK_START                 } from './subworkflows/janelia/spark_start/main'
 include { SPARK_STOP                  } from './subworkflows/janelia/spark_stop/main'
 include { TIFFSERIES_TO_N5            } from './modules/local/tiffseries-to-n5/main'
+include { N5_TO_TIFFSERIES            } from './modules/local/n5-to-tiffseries/main'
 include { CUSTOM_DUMPSOFTWAREVERSIONS } from './modules/nf-core/custom/dumpsoftwareversions/main'
 
 workflow N5SPARK {
@@ -73,13 +74,23 @@ workflow N5SPARK {
         params.spark_driver_memory
     )
 
-    TIFFSERIES_TO_N5(SPARK_START.out.map {
-        def (meta, files, spark) = it
-        [meta, final_params.indir, final_params.outdir, params.output_name, params.output_dataset, spark]
-    })
-    ch_versions = ch_versions.mix(TIFFSERIES_TO_N5.out.versions)
+    def n5_attr = file(params.indir).resolve('attributes.json')
+    if (n5_attr.exists()) {
+        convert_out = N5_TO_TIFFSERIES(SPARK_START.out.map {
+            def (meta, files, spark) = it
+            [meta, final_params.indir, params.input_dataset, final_params.outdir, spark]
+        })
+        ch_versions = ch_versions.mix(N5_TO_TIFFSERIES.out.versions)
+    }
+    else {
+        convert_out = TIFFSERIES_TO_N5(SPARK_START.out.map {
+            def (meta, files, spark) = it
+            [meta, final_params.indir, final_params.outdir, params.output_name, params.output_dataset, spark]
+        })
+        ch_versions = ch_versions.mix(TIFFSERIES_TO_N5.out.versions)
+    }
 
-    done = SPARK_STOP(TIFFSERIES_TO_N5.out.results.map {
+    done = SPARK_STOP(convert_out.results.map {
         def (meta, input_path, output_n5, output_dataset, spark) = it
         [meta, spark_mounted_dirs, spark]
     })
